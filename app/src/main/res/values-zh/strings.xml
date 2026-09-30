@@ -4,6 +4,10 @@
 <string name="hide_status_bar_summary">并使得网页显示在状态栏区域</string>
 <string name="remove_top_padding_title">移除顶边距</string>
 <string name="remove_bottom_padding_title">移除底边距</string>
+    <string name="padding_dp_summary_zero">完全移除</string>
+    <string name="padding_dp_summary_value">%1$d dp</string>
+    <string name="top_padding_slider_label">顶边距微调</string>
+    <string name="bottom_padding_slider_label">底边距微调</string>
 <string name="long_click_overflow_button_to_top_title">长按更多按钮回顶部</string>
 <string name="long_click_new_tab_button_to_load_inplace_title">长按新标签页按钮原地加载标签页</string>
 <string name="long_click_new_tab_button_to_load_inplace_summary">加载标签页而不新建标签页</string>

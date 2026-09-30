@@ -23,6 +23,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Slider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
@@ -40,6 +42,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.font.FontWeight
+import kotlin.math.roundToInt
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import de.robv.android.xposed.XposedBridge
@@ -64,24 +68,83 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                 }
             }
         )
-        SwitchItem(
-            title = stringResource(id = R.string.remove_top_padding_title),
-            checked = preference.removeTopPadding,
-            onCheckedChange = {
-                viewModel.updateData { currentPreference ->
-                    currentPreference.copy(removeTopPadding = it)
+        Column {
+            var expanded by rememberSaveable { mutableStateOf(false) }
+
+            SwitchItem(
+                title = stringResource(id = R.string.remove_top_padding_title),
+                summary = if (preference.removeTopPadding) {
+                    if (preference.topPaddingDp == 0) {
+                        stringResource(R.string.padding_dp_summary_zero)
+                    } else {
+                        stringResource(R.string.padding_dp_summary_value, preference.topPaddingDp)
+                    }
+                } else null,
+                clickable = true,
+                onClick = { expanded = !expanded },
+                checked = preference.removeTopPadding,
+                onCheckedChange = {
+                    if (it) {
+                        expanded = true
+                    }
+                    viewModel.updateData { currentPreference ->
+                        currentPreference.copy(removeTopPadding = it)
+                    }
                 }
+            )
+
+            AnimatedVisibility(expanded && preference.removeTopPadding) {
+                PaddingSliderRow(
+                    label = stringResource(R.string.top_padding_slider_label),
+                    value = preference.topPaddingDp,
+                    range = 0..100,
+                    onValueChange = { newValue ->
+                        viewModel.updateData { currentPreference ->
+                            currentPreference.copy(topPaddingDp = newValue)
+                        }
+                    }
+                )
             }
-        )
-        SwitchItem(
-            title = stringResource(id = R.string.remove_bottom_padding_title),
-            checked = preference.removeBottomPadding,
-            onCheckedChange = {
-                viewModel.updateData { currentPreference ->
-                    currentPreference.copy(removeBottomPadding = it)
+        }
+
+        Column {
+            var expanded by rememberSaveable { mutableStateOf(false) }
+
+            SwitchItem(
+                title = stringResource(id = R.string.remove_bottom_padding_title),
+                summary = if (preference.removeBottomPadding) {
+                    if (preference.bottomPaddingDp == 0) {
+                        stringResource(R.string.padding_dp_summary_zero)
+                    } else {
+                        stringResource(R.string.padding_dp_summary_value, preference.bottomPaddingDp)
+                    }
+                } else null,
+                clickable = true,
+                onClick = { expanded = !expanded },
+                checked = preference.removeBottomPadding,
+                onCheckedChange = {
+                    if (it) {
+                        expanded = true
+                    }
+                    viewModel.updateData { currentPreference ->
+                        currentPreference.copy(removeBottomPadding = it)
+                    }
                 }
+            )
+
+            AnimatedVisibility(expanded && preference.removeBottomPadding) {
+                PaddingSliderRow(
+                    label = stringResource(R.string.bottom_padding_slider_label),
+                    value = preference.bottomPaddingDp,
+                    range = 0..100,
+                    onValueChange = { newValue ->
+                        viewModel.updateData { currentPreference ->
+                            currentPreference.copy(bottomPaddingDp = newValue)
+                        }
+                    }
+                )
             }
-        )
+        }
         SwitchItem(
             title = stringResource(id = R.string.long_click_overflow_button_to_top_title),
             checked = preference.longClickOverflowButtonToTop,
@@ -443,6 +506,81 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
     }
 }
 
+@Composable
+private fun PaddingSliderRow(
+    label: String,
+    value: Int,
+    range: IntRange = 0..100,
+    onValueChange: (Int) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            Text(
+                text = if (value == 0) {
+                    stringResource(R.string.padding_dp_summary_zero)
+                } else {
+                    stringResource(R.string.padding_dp_summary_value, value)
+                },
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(
+                onClick = {
+                    if (value > range.first) {
+                        onValueChange(value - 1)
+                    }
+                },
+                enabled = value > range.first
+            ) {
+                Text(
+                    text = "−",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            Slider(
+                value = value.toFloat(),
+                onValueChange = { onValueChange(it.roundToInt().coerceIn(range.first, range.last)) },
+                valueRange = range.first.toFloat()..range.last.toFloat(),
+                steps = range.last - range.first - 1,
+                modifier = Modifier.weight(1f)
+            )
+            IconButton(
+                onClick = {
+                    if (value < range.last) {
+                        onValueChange(value + 1)
+                    }
+                },
+                enabled = value < range.last
+            ) {
+                Text(
+                    text = "+",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
 @Composable
 private fun PercentConfigRow(
     label: String,

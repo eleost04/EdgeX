@@ -47,7 +47,12 @@ class Main : IXposedHookLoadPackage, IXposedHookZygoteInit {
         if (preference.hideStatusBar) {
             Ui.hideStatusBar()
         }
-        Ui.removePadding(preference.removeTopPadding, preference.removeBottomPadding)
+        Ui.removePadding(
+            preference.removeTopPadding,
+            preference.topPaddingDp,
+            preference.removeBottomPadding,
+            preference.bottomPaddingDp
+        )
         if (preference.longClickOverflowButtonToTop) {
             LongClick.setupScrollToTopOnLongClickOverflowButton()
         }

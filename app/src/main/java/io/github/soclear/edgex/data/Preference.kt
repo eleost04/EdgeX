@@ -6,7 +6,9 @@ import kotlinx.serialization.Serializable
 data class Preference(
     val hideStatusBar: Boolean = false,
     val removeTopPadding: Boolean = false,
+    val topPaddingDp: Int = 0,
     val removeBottomPadding: Boolean = false,
+    val bottomPaddingDp: Int = 0,
     val longClickOverflowButtonToTop: Boolean = false,
     val longClickNewTabButtonToLoadInplace: Boolean = false,
     val setNewTabPageUrl: Boolean = false,

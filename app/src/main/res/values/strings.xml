@@ -4,6 +4,10 @@
     <string name="hide_status_bar_summary">Allows the webpage to display in the status bar area</string>
     <string name="remove_top_padding_title">Remove top padding</string>
     <string name="remove_bottom_padding_title">Remove bottom padding</string>
+    <string name="padding_dp_summary_zero">Completely removed</string>
+    <string name="padding_dp_summary_value">%1$d dp</string>
+    <string name="top_padding_slider_label">Top padding adjustment</string>
+    <string name="bottom_padding_slider_label">Bottom padding adjustment</string>
     <string name="long_click_overflow_button_to_top_title">Long press Overflow to scroll to top</string>
     <string name="long_click_new_tab_button_to_load_inplace_title">Long press New Tab to load in-place</string>
     <string name="long_click_new_tab_button_to_load_inplace_summary">Load the URL in current tab instead of creating a new one</string>

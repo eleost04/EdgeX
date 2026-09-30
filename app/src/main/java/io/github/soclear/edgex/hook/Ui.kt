@@ -16,7 +16,12 @@ object Ui {
     /**
      * 移除 padding
      */
-    fun removePadding(top: Boolean, bottom: Boolean) {
+    fun removePadding(
+        top: Boolean,
+        topPaddingDp: Int = 0,
+        bottom: Boolean,
+        bottomPaddingDp: Int = 0
+    ) {
         if (!top && !bottom) return
         XposedHelpers.findAndHookMethod(
             View::class.java,
@@ -27,12 +32,14 @@ object Ui {
             Int::class.javaPrimitiveType,
             object : XC_MethodHook() {
                 override fun beforeHookedMethod(param: MethodHookParam) {
-                    if (param.thisObject.javaClass.name == "org.chromium.ui.edge_to_edge.layout.EdgeToEdgeBaseLayout") {
+                    val view = param.thisObject as? View ?: return
+                    if (view.javaClass.name == "org.chromium.ui.edge_to_edge.layout.EdgeToEdgeBaseLayout") {
+                        val density = view.resources.displayMetrics.density
                         if (top) {
-                            param.args[1] = 0
+                            param.args[1] = (topPaddingDp * density).toInt().coerceAtLeast(0)
                         }
                         if (bottom) {
-                            param.args[3] = 0
+                            param.args[3] = (bottomPaddingDp * density).toInt().coerceAtLeast(0)
                         }
                     }
                 }
