@@ -2,6 +2,8 @@
 <string name="app_name">EdgeX</string>
 <string name="hide_status_bar_title">隐藏状态栏</string>
 <string name="hide_status_bar_summary">并使得网页显示在状态栏区域</string>
+    <string name="immersive_status_bar_title">透明状态栏</string>
+    <string name="immersive_status_bar_summary">保留状态栏图标与时间，将背景设为完全透明</string>
 <string name="remove_top_padding_title">移除顶边距</string>
 <string name="remove_bottom_padding_title">移除底边距</string>
     <string name="padding_dp_summary_zero">完全移除</string>

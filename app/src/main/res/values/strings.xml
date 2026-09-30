@@ -2,6 +2,8 @@
     <string name="app_name">EdgeX</string>
     <string name="hide_status_bar_title">Hide Status Bar</string>
     <string name="hide_status_bar_summary">Allows the webpage to display in the status bar area</string>
+    <string name="immersive_status_bar_title">Transparent Status Bar</string>
+    <string name="immersive_status_bar_summary">Keep status bar icons and time visible while making background transparent</string>
     <string name="remove_top_padding_title">Remove top padding</string>
     <string name="remove_bottom_padding_title">Remove bottom padding</string>
     <string name="padding_dp_summary_zero">Completely removed</string>

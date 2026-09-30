@@ -46,6 +46,8 @@ class Main : IXposedHookLoadPackage, IXposedHookZygoteInit {
 
         if (preference.hideStatusBar) {
             Ui.hideStatusBar()
+        } else if (preference.immersiveStatusBar) {
+            Ui.setImmersiveStatusBar()
         }
         Ui.removePadding(
             preference.removeTopPadding,

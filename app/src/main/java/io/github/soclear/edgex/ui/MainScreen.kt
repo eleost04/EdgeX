@@ -68,6 +68,16 @@ fun MainScreen(viewModel: MainViewModel, modifier: Modifier = Modifier) {
                 }
             }
         )
+        SwitchItem(
+            title = stringResource(id = R.string.immersive_status_bar_title),
+            summary = stringResource(id = R.string.immersive_status_bar_summary),
+            checked = preference.immersiveStatusBar,
+            onCheckedChange = {
+                viewModel.updateData { currentPreference ->
+                    currentPreference.copy(immersiveStatusBar = it)
+                }
+            }
+        )
         Column {
             var expanded by rememberSaveable { mutableStateOf(false) }
 

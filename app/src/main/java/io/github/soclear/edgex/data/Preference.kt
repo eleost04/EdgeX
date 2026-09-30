@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class Preference(
     val hideStatusBar: Boolean = false,
+    val immersiveStatusBar: Boolean = false,
     val removeTopPadding: Boolean = false,
     val topPaddingDp: Int = 0,
     val removeBottomPadding: Boolean = false,

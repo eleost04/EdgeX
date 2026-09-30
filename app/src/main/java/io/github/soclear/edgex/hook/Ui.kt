@@ -131,4 +131,53 @@ object Ui {
         XposedHelpers.findAndHookMethod(Activity::class.java, "onResume", hookLifecycle)
         XposedHelpers.findAndHookMethod(Activity::class.java, "onWindowFocusChanged", Boolean::class.javaPrimitiveType, hookLifecycle)
     }
+
+
+    /**
+     * 透明状态栏（保留图标与时间，沉浸式延伸）
+     */
+    fun setImmersiveStatusBar() {
+        val hookLifecycle = object : XC_MethodHook() {
+            @Suppress("DEPRECATION")
+            override fun afterHookedMethod(param: MethodHookParam) {
+                val activity = param.thisObject as? Activity ?: return
+                val window = activity.window ?: return
+                val decorView = window.decorView
+
+                // 允许内容延伸到状态栏下方
+                window.setDecorFitsSystemWindows(false)
+
+                // 设置状态栏背景完全透明，避免黑底或原生系统半透明遮罩
+                window.statusBarColor = android.graphics.Color.TRANSPARENT
+
+                // 清除半透明系统栏 Flag，确保完全透明
+                window.clearFlags(android.view.WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+                window.addFlags(android.view.WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+
+                val controller = window.insetsController
+                // 确保状态栏显示（不隐藏，保留图标与时间）
+                controller?.show(WindowInsets.Type.statusBars())
+
+                // 兼容低版本及不同定制 ROM 的沉浸 Flag
+                decorView.systemUiVisibility = decorView.systemUiVisibility
+                    .or(View.SYSTEM_UI_FLAG_LAYOUT_STABLE)
+                    .or(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+            }
+        }
+        XposedHelpers.findAndHookMethod(Activity::class.java, "onCreate", Bundle::class.java, hookLifecycle)
+        XposedHelpers.findAndHookMethod(Activity::class.java, "onResume", hookLifecycle)
+        XposedHelpers.findAndHookMethod(Activity::class.java, "onWindowFocusChanged", Boolean::class.javaPrimitiveType, hookLifecycle)
+
+        // 防止 Edge 内部页面切换或全屏切换时重新设置 statusBarColor
+        XposedHelpers.findAndHookMethod(
+            android.view.Window::class.java,
+            "setStatusBarColor",
+            Int::class.javaPrimitiveType,
+            object : XC_MethodHook() {
+                override fun beforeHookedMethod(param: MethodHookParam) {
+                    param.args[0] = android.graphics.Color.TRANSPARENT
+                }
+            }
+        )
+    }
 }
